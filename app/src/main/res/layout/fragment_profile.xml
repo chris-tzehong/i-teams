@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileFragment"
+    android:id="@+id/root_layout_popup"
+    android:foreground="@drawable/shape_window_dim">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/profile_image_label"
+            android:src="@drawable/profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/profile_reputation_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/profile_reputation_score_placeholder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:id="@+id/profile_public_information"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_reputation_score">
+
+            <TextView
+                android:id="@+id/profile_name"
+                style="@style/profileFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_profile_name"
+                android:text="@string/profile_name_label_placeholder" />
+
+            <TextView
+                android:id="@+id/profile_id"
+                style="@style/profileFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_profile_id"
+                android:text="@string/profile_id_label_placeholder" />
+
+            <TextView
+                android:id="@+id/profile_email"
+                style="@style/profileFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_profile_email"
+                android:text="@string/profile_email_label_placeholder" />
+
+            <TextView
+                android:id="@+id/profile_course_or_department"
+                style="@style/profileFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_profile_course_department"
+                android:text="@string/profile_course_or_department_label_placeholder" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/profile_private_information"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_public_information">
+
+            <TextView
+                android:id="@+id/profile_private_information_label"
+                style="@style/profileFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/profile_private_information_label_placeholder"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/profile_dob"
+                style="@style/profileFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_profile_birthday"
+                android:text="@string/profile_dob_label_placeholder" />
+
+            <TextView
+                android:id="@+id/profile_contact"
+                style="@style/profileFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_profile_contact"
+                android:text="@string/profile_contact_placeholder" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/profile_change_password_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/profile_change_password_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
