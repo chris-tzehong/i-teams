@@ -1,10 +1,9 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.profile
 
 
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.transition.Slide
 import android.transition.TransitionManager
 import android.util.Log
@@ -14,8 +13,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
+import com.example.finalyearproject.LoginActivity
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.Lecturer
+import com.example.finalyearproject.model.Student
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_profile.*
 import java.io.Serializable
@@ -35,6 +37,7 @@ class ProfileFragment : Fragment() {
         val mProfileIdLabel: TextView = view.findViewById(R.id.profile_id)
         val mProfileEmailLabel: TextView = view.findViewById(R.id.profile_email)
         val mProfileCourseOrDepartmentLabel: TextView = view.findViewById(R.id.profile_course_or_department)
+        val mProfilePrivateInformationLayout: LinearLayout = view.findViewById(R.id.profile_private_information)
         val mProfileDobLabel: TextView = view.findViewById(R.id.profile_dob)
         val mProfileContactLabel: TextView = view.findViewById(R.id.profile_contact)
         val mProfileChangePasswordButton: Button = view.findViewById(R.id.profile_change_password_button)
@@ -52,8 +55,7 @@ class ProfileFragment : Fragment() {
             mProfileIdLabel.text = student.student_id.toString()
             mProfileEmailLabel.text = student.student_email
             mProfileCourseOrDepartmentLabel.text = student.student_course
-            mProfileDobLabel.isVisible = false
-            mProfileContactLabel.isVisible = false
+            mProfilePrivateInformationLayout.isVisible = false
             mProfileChangePasswordButton.isVisible = false
         } else {
             if (LoginActivity.isLecturer) {
@@ -116,19 +118,23 @@ class ProfileFragment : Fragment() {
                 val newPassword = mNewPasswordEditText.text.toString()
                 val confirmPassword = mConfirmPasswordEditText.text.toString()
                 when {
-                    newPassword.length < 6 -> Toast.makeText(context, R.string.profile_password_too_short_error, Toast.LENGTH_SHORT).show()
-                    confirmPassword != newPassword -> Toast.makeText(context, R.string.profile_password_not_match_error, Toast.LENGTH_SHORT).show()
+                    newPassword.length < 6 -> Toast.makeText(context,
+                        R.string.profile_password_too_short_error, Toast.LENGTH_SHORT).show()
+                    confirmPassword != newPassword -> Toast.makeText(context,
+                        R.string.profile_password_not_match_error, Toast.LENGTH_SHORT).show()
                     else -> {
                         val currentUser = auth.currentUser
                         currentUser?.updatePassword(newPassword)?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 Log.d(PROFILE_FRAGMENT, "User password updated.")
-                                Toast.makeText(context, R.string.profile_successful_update_password, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,
+                                    R.string.profile_successful_update_password, Toast.LENGTH_SHORT).show()
                                 mRootLayout.foreground.alpha = 0
                                 popupWindow.dismiss()
                             } else {
                                 Log.d(PROFILE_FRAGMENT, "User password failed to update.")
-                                Toast.makeText(context, R.string.profile_failure_update_password, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,
+                                    R.string.profile_failure_update_password, Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -147,7 +153,8 @@ class ProfileFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): ProfileFragment = ProfileFragment()
+        fun newInstance(): ProfileFragment =
+            ProfileFragment()
         fun newOtherProfileInstance(serializable: Serializable): ProfileFragment {
             val fragment = ProfileFragment()
             val args = Bundle()
@@ -160,7 +167,7 @@ class ProfileFragment : Fragment() {
         const val OTHER_PROFILE = "student profile"
     }
 
-    fun convertDob(date: Date?): String {
+    private fun convertDob(date: Date?): String {
         val calendar = GregorianCalendar()
         calendar.time = date
         return getString(R.string.date_placeholder, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))

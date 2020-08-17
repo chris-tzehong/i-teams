@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.model
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore

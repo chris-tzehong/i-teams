@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.lecturerreview
 
 
 import android.app.Activity
@@ -13,14 +13,17 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.text.isDigitsOnly
+import com.example.finalyearproject.LoginActivity
+import com.example.finalyearproject.MainActivity
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.Lecturer
+import com.example.finalyearproject.model.PeerReview
+import com.example.finalyearproject.model.PeerReviewGrouping
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.fragment_lecturer_peer_review_list.*
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.lang.StringBuilder
 
 /**
  * A simple [Fragment] subclass.
@@ -46,16 +49,26 @@ class AddNewPeerReviewDetailsFragment : Fragment() {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "text/csv"
-            startActivityForResult(intent, OPEN_REQUEST_CODE)
+            startActivityForResult(intent,
+                OPEN_REQUEST_CODE
+            )
         }
 
         mAddNewPeerReviewProceedButton.setOnClickListener {
             when {
-                mAddNewPeerReviewSubjectNameEditText.text.isEmpty() -> Toast.makeText(activity, R.string.add_new_peer_review_details_empty_subject_name_error, Toast.LENGTH_SHORT).show()
-                mAddNewPeerReviewAssignmentIdEditText.text.isEmpty() -> Toast.makeText(activity, R.string.add_new_peer_review_details_empty_assignment_id_error, Toast.LENGTH_SHORT).show()
-                temporaryPeerReviewGroupingsHolder.isEmpty() -> Toast.makeText(activity, R.string.add_new_peer_review_details_empty_student_list_error, Toast.LENGTH_SHORT).show()
+                mAddNewPeerReviewSubjectNameEditText.text.isEmpty() -> Toast.makeText(activity,
+                    R.string.add_new_peer_review_details_empty_subject_name_error, Toast.LENGTH_SHORT).show()
+                mAddNewPeerReviewAssignmentIdEditText.text.isEmpty() -> Toast.makeText(activity,
+                    R.string.add_new_peer_review_details_empty_assignment_id_error, Toast.LENGTH_SHORT).show()
+                temporaryPeerReviewGroupingsHolder.isEmpty() -> Toast.makeText(activity,
+                    R.string.add_new_peer_review_details_empty_student_list_error, Toast.LENGTH_SHORT).show()
                 else -> {
-                    val peerReview = PeerReview(mAddNewPeerReviewSubjectNameEditText.text.toString(), lecturer.lecturer_email, lecturer.lecturer_name)
+                    val peerReview =
+                        PeerReview(
+                            mAddNewPeerReviewSubjectNameEditText.text.toString(),
+                            lecturer.lecturer_email,
+                            lecturer.lecturer_name
+                        )
                     db.collection(PeerReview.PEER_REVIEW_COLLECTION).document(mAddNewPeerReviewSubjectNameEditText.text.toString()).set(peerReview).addOnSuccessListener {
                         temporaryPeerReviewGroupingsHolder.forEach { item ->
                             item.subject_name = mAddNewPeerReviewSubjectNameEditText.text.toString()
@@ -73,11 +86,18 @@ class AddNewPeerReviewDetailsFragment : Fragment() {
                                 db.collection(PeerReview.PEER_REVIEW_COLLECTION).document(mAddNewPeerReviewSubjectNameEditText.text.toString()).update("subject_name", mAddNewPeerReviewSubjectNameEditText.text.toString())
                             }.addOnFailureListener {
                                 Log.d(MainActivity.TAG, "Fail to write into database.")
-                                Toast.makeText(activity, R.string.add_new_peer_review_details_fail_to_create_error, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(activity,
+                                    R.string.add_new_peer_review_details_fail_to_create_error, Toast.LENGTH_SHORT).show()
                             }
                         }
                         val transaction = fragmentManager!!.beginTransaction()
-                        transaction.replace(R.id.main_container, AddNewPeerReviewQuestionSetFragment.getNewAddPeerReviewQuestionSetInstance(mAddNewPeerReviewSubjectNameEditText.text.toString(), mAddNewPeerReviewAssignmentIdEditText.text.toString()))
+                        transaction.replace(
+                            R.id.main_container,
+                            AddNewPeerReviewQuestionSetFragment.getNewAddPeerReviewQuestionSetInstance(
+                                mAddNewPeerReviewSubjectNameEditText.text.toString(),
+                                mAddNewPeerReviewAssignmentIdEditText.text.toString()
+                            )
+                        )
                         transaction.addToBackStack(null)
                         transaction.commit()
                     }
@@ -109,13 +129,21 @@ class AddNewPeerReviewDetailsFragment : Fragment() {
                                     studentEmailList.add(content[i].email.toString())
                                 } else {
                                     studentEmailList.add(content[i].email.toString())
-                                    val peerReviewGrouping = PeerReviewGrouping(group_id = content[i].group_id.toString(), student_email_list = studentEmailList)
+                                    val peerReviewGrouping =
+                                        PeerReviewGrouping(
+                                            group_id = content[i].group_id.toString(),
+                                            student_email_list = studentEmailList
+                                        )
                                     peerReviewGroupings.add(peerReviewGrouping)
                                     studentEmailList = mutableListOf()
                                 }
                             } else {
                                 studentEmailList.add(content[i].email.toString())
-                                val peerReviewGrouping = PeerReviewGrouping(group_id = content[i].group_id.toString(), student_email_list = studentEmailList)
+                                val peerReviewGrouping =
+                                    PeerReviewGrouping(
+                                        group_id = content[i].group_id.toString(),
+                                        student_email_list = studentEmailList
+                                    )
                                 peerReviewGroupings.add(peerReviewGrouping)
                             }
                         }
@@ -138,7 +166,11 @@ class AddNewPeerReviewDetailsFragment : Fragment() {
 
         while (currentLine != null) {
             val tokens = currentLine.split(",")
-            val groupHolder = GroupHolder(tokens[0], tokens[1])
+            val groupHolder =
+                GroupHolder(
+                    tokens[0],
+                    tokens[1]
+                )
             groupHolders.add(groupHolder)
             currentLine = reader.readLine()
         }
@@ -151,7 +183,8 @@ class AddNewPeerReviewDetailsFragment : Fragment() {
         private val OPEN_REQUEST_CODE = 42
         private var temporaryPeerReviewGroupingsHolder = mutableListOf<PeerReviewGrouping>()
 
-        fun newInstance(): AddNewPeerReviewDetailsFragment = AddNewPeerReviewDetailsFragment()
+        fun newInstance(): AddNewPeerReviewDetailsFragment =
+            AddNewPeerReviewDetailsFragment()
     }
 
     data class GroupHolder(var group_id: String? = null, var email: String? = null)

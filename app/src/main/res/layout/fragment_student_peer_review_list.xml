@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StudentPeerReviewListFragment">
+    tools:context=".studentreview.StudentPeerReviewListFragment">
 
     <ScrollView
         android:id="@+id/peer_review_student_scroll_view"

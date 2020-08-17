@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.home
 
 
 import android.os.Bundle
@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.Announcement
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,7 +45,11 @@ class LecturerHomeFragment : Fragment() {
 
         val mInitialAnnouncements: MutableList<Announcement> = Announcement.readAllFromDatabase()
 
-        val mInitialAdapter = AnnouncementAdapter(activity, mInitialAnnouncements)
+        val mInitialAdapter =
+            AnnouncementAdapter(
+                activity,
+                mInitialAnnouncements
+            )
         mAnnouncementRecyclerView.adapter = mInitialAdapter
 
         fireStoreListener = db.collection(Announcement.ANNOUNCEMENT_COLLECTION).addSnapshotListener(
@@ -61,7 +67,11 @@ class LecturerHomeFragment : Fragment() {
                     db.collection(Announcement.ANNOUNCEMENT_COLLECTION).document(doc.id).update("announcement_id", doc.id)
                     mAnnouncements.add(announcement)
                 }
-                val mAdapter = AnnouncementAdapter(activity, mAnnouncements)
+                val mAdapter =
+                    AnnouncementAdapter(
+                        activity,
+                        mAnnouncements
+                    )
                 mAnnouncementRecyclerView.adapter = mAdapter
             })
 
@@ -75,14 +85,21 @@ class LecturerHomeFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): LecturerHomeFragment = LecturerHomeFragment()
+        fun newInstance(): LecturerHomeFragment =
+            LecturerHomeFragment()
         const val HOME_FRAGMENT = "Home Fragment"
     }
 
     class AnnouncementAdapter(private val context: FragmentActivity?, private val announcements: List<Announcement>): RecyclerView.Adapter<AnnouncementAdapter.AnnouncementHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnnouncementHolder {
-            return AnnouncementHolder(LayoutInflater.from(context).inflate(R.layout.list_item_announcement, parent, false))
+            return AnnouncementHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_announcement,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {

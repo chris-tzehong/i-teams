@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.studentreview
 
 
 import android.os.Bundle
@@ -10,6 +10,12 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.LoginActivity
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.PeerReview
+import com.example.finalyearproject.model.PeerReviewGrouping
+import com.example.finalyearproject.model.PeerReviewResult
+import com.example.finalyearproject.model.Student
 import com.google.firebase.firestore.FirebaseFirestore
 
 class StudentViewCompletedPeerReviewFragment : Fragment() {
@@ -20,7 +26,9 @@ class StudentViewCompletedPeerReviewFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_student_view_completed_peer_review, container, false)
-        val mStudentViewCompletedReviewRecyclerView: RecyclerView = view.findViewById(R.id.student_view_completed_peer_review_recycler_view)
+        val mStudentViewCompletedReviewRecyclerView: RecyclerView = view.findViewById(
+            R.id.student_view_completed_peer_review_recycler_view
+        )
         val db = FirebaseFirestore.getInstance()
         val student = LoginActivity.appUser as Student
         val subjectName = arguments!!.getString(SUBJECT_NAME)
@@ -45,7 +53,11 @@ class StudentViewCompletedPeerReviewFragment : Fragment() {
                     }
                     preventOverwriteTrigger += 1
                     if (preventOverwriteTrigger == peerReviewGrouping.student_email_list!!.size) {
-                        val mViewStudentResultAdapter = StudentViewResultsAdapter(activity, peerReviewResults)
+                        val mViewStudentResultAdapter =
+                            StudentViewResultsAdapter(
+                                activity,
+                                peerReviewResults
+                            )
                         mStudentViewCompletedReviewRecyclerView.adapter = mViewStudentResultAdapter
                     }
                 }
@@ -61,10 +73,12 @@ class StudentViewCompletedPeerReviewFragment : Fragment() {
         const val ASSIGNMENT_ID = "student view completed peer review assignment id"
         const val GROUP_ID = "student view completed peer review group id"
 
-        fun newInstance(): StudentViewCompletedPeerReviewFragment = StudentViewCompletedPeerReviewFragment()
+        fun newInstance(): StudentViewCompletedPeerReviewFragment =
+            StudentViewCompletedPeerReviewFragment()
 
         fun getNewPeerReviewResultInstance(subjectName: String, assignmentId: String, groupId: String): StudentViewCompletedPeerReviewFragment {
-            val fragment = StudentViewCompletedPeerReviewFragment()
+            val fragment =
+                StudentViewCompletedPeerReviewFragment()
             val args = Bundle()
             args.putString(SUBJECT_NAME, subjectName)
             args.putString(ASSIGNMENT_ID, assignmentId)
@@ -79,7 +93,13 @@ class StudentViewCompletedPeerReviewFragment : Fragment() {
             parent: ViewGroup,
             viewType: Int
         ): StudentViewResultsHolder {
-            return StudentViewResultsHolder(LayoutInflater.from(context).inflate(R.layout.list_item_student_view_completed_peer_review, parent, false))
+            return StudentViewResultsHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_student_view_completed_peer_review,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -94,9 +114,15 @@ class StudentViewCompletedPeerReviewFragment : Fragment() {
         class StudentViewResultsHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             fun bind (peerReviewResult: PeerReviewResult, position: Int) = with(itemView) {
-                val mStudentViewCompletedReviewStudentNumber: TextView = itemView.findViewById(R.id.student_view_completed_peer_review_student_number_placeholder)
-                val mStudentViewCompletedReviewStudentResults: TextView = itemView.findViewById(R.id.student_view_completed_peer_review_results_placeholder)
-                val mStudentViewCompletedReviewAdditionalComments: TextView = itemView.findViewById(R.id.student_view_completed_peer_review_additional_comments_placeholder)
+                val mStudentViewCompletedReviewStudentNumber: TextView = itemView.findViewById(
+                    R.id.student_view_completed_peer_review_student_number_placeholder
+                )
+                val mStudentViewCompletedReviewStudentResults: TextView = itemView.findViewById(
+                    R.id.student_view_completed_peer_review_results_placeholder
+                )
+                val mStudentViewCompletedReviewAdditionalComments: TextView = itemView.findViewById(
+                    R.id.student_view_completed_peer_review_additional_comments_placeholder
+                )
 
                 val studentNumberString = resources.getString(R.string.student_view_results_student_number, position + 1)
                 mStudentViewCompletedReviewStudentNumber.text = studentNumberString

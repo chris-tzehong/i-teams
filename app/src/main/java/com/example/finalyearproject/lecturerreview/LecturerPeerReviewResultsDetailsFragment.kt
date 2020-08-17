@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.lecturerreview
 
 
 import android.os.Bundle
@@ -10,6 +10,10 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.PeerReview
+import com.example.finalyearproject.model.PeerReviewQuestionSet
+import com.example.finalyearproject.model.PeerReviewResult
 import com.google.firebase.firestore.FirebaseFirestore
 
 class LecturerPeerReviewResultsDetailsFragment : Fragment() {
@@ -20,10 +24,18 @@ class LecturerPeerReviewResultsDetailsFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_lecturer_peer_review_results_details, container, false)
-        val mLecturerPeerReviewDetailsReviewerEmailLabel: TextView = view.findViewById(R.id.lecturer_peer_review_results_details_reviewer_label)
-        val mLecturerPeerReviewDetailsReviewTargetEmailLabel: TextView = view.findViewById(R.id.lecturer_peer_review_results_details_reviewed_label)
-        val mLecturerPeerReviewDetailsRecyclerView: RecyclerView = view.findViewById(R.id.lecturer_peer_review_results_details_recycler_view)
-        val mLecturerPeerReviewDetailsAdditionalCommentLabel: TextView = view.findViewById(R.id.lecturer_peer_review_results_details_comments_label)
+        val mLecturerPeerReviewDetailsReviewerEmailLabel: TextView = view.findViewById(
+            R.id.lecturer_peer_review_results_details_reviewer_label
+        )
+        val mLecturerPeerReviewDetailsReviewTargetEmailLabel: TextView = view.findViewById(
+            R.id.lecturer_peer_review_results_details_reviewed_label
+        )
+        val mLecturerPeerReviewDetailsRecyclerView: RecyclerView = view.findViewById(
+            R.id.lecturer_peer_review_results_details_recycler_view
+        )
+        val mLecturerPeerReviewDetailsAdditionalCommentLabel: TextView = view.findViewById(
+            R.id.lecturer_peer_review_results_details_comments_label
+        )
         val subjectName = arguments!!.getString(SUBJECT_NAME)
         val assignmentId = arguments!!.getString(ASSIGNMENT_ID)
         val groupId = arguments!!.getString(GROUP_ID)
@@ -45,10 +57,18 @@ class LecturerPeerReviewResultsDetailsFragment : Fragment() {
             db.collection(PeerReviewQuestionSet.PEER_REVIEW_QUESTION_SET_COLLECTION).document(questionSetName!!).get().addOnSuccessListener { documentSnapshot ->
                 val questionSet = documentSnapshot.toObject(PeerReviewQuestionSet::class.java)
                 for (i in questionSet!!.question_list!!.indices) {
-                    val questionAnswer = QuestionAnswer(questionSet!!.question_list!![i], peerReviewResult.review_results!!.get(i.toString()))
+                    val questionAnswer =
+                        QuestionAnswer(
+                            questionSet!!.question_list!![i],
+                            peerReviewResult.review_results!!.get(i.toString())
+                        )
                     questionAnswers.add(questionAnswer)
                 }
-                val mViewResultsAdapter = ViewResultsAdapter(activity, questionAnswers)
+                val mViewResultsAdapter =
+                    ViewResultsAdapter(
+                        activity,
+                        questionAnswers
+                    )
                 mLecturerPeerReviewDetailsRecyclerView.adapter = mViewResultsAdapter
             }
         }
@@ -66,10 +86,12 @@ class LecturerPeerReviewResultsDetailsFragment : Fragment() {
         const val REVIEW_TARGET = "lecturer peer review results details review target"
         const val QUESTION_SET_NAME = "lecturer peer review results details question set name"
 
-        fun newInstance(): LecturerPeerReviewResultsDetailsFragment = LecturerPeerReviewResultsDetailsFragment()
+        fun newInstance(): LecturerPeerReviewResultsDetailsFragment =
+            LecturerPeerReviewResultsDetailsFragment()
 
         fun getResultDetailsInstance(subject_name: String, assignment_id: String, group_id: String, reviewer_email: String, review_target: String, question_set_name: String): LecturerPeerReviewResultsDetailsFragment {
-            val fragment = LecturerPeerReviewResultsDetailsFragment()
+            val fragment =
+                LecturerPeerReviewResultsDetailsFragment()
             val args = Bundle()
             args.putString(SUBJECT_NAME, subject_name)
             args.putString(ASSIGNMENT_ID, assignment_id)
@@ -84,7 +106,13 @@ class LecturerPeerReviewResultsDetailsFragment : Fragment() {
 
     class ViewResultsAdapter(private val context: FragmentActivity?, private val questionAnswers: List<QuestionAnswer>): RecyclerView.Adapter<ViewResultsAdapter.ViewResultsHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewResultsHolder {
-            return ViewResultsHolder(LayoutInflater.from(context).inflate(R.layout.list_item_lecturer_peer_review_details_question_answer, parent, false))
+            return ViewResultsHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_lecturer_peer_review_details_question_answer,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -99,8 +127,12 @@ class LecturerPeerReviewResultsDetailsFragment : Fragment() {
         class ViewResultsHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             fun bind(questionAnswer: QuestionAnswer) = with(itemView) {
-                val mLecturerPeerReviewResultsDetailsQuestionLabel: TextView = itemView.findViewById(R.id.lecturer_peer_review_results_details_questions_placeholder)
-                val mLecturerPeerReviewResultsDetailsAnswerLabel: TextView = itemView.findViewById(R.id.lecturer_peer_review_results_details_answer_placeholder)
+                val mLecturerPeerReviewResultsDetailsQuestionLabel: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_results_details_questions_placeholder
+                )
+                val mLecturerPeerReviewResultsDetailsAnswerLabel: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_results_details_answer_placeholder
+                )
 
                 mLecturerPeerReviewResultsDetailsQuestionLabel.text = questionAnswer.question
                 val stringValue = resources.getString(R.string.lecturer_peer_review_results_details_answer_placeholder, questionAnswer.answer)

@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.lookup
 
 
 import android.os.Bundle
@@ -16,6 +16,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.profile.ProfileFragment
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.Student
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -39,7 +42,11 @@ class LookupFragment : Fragment() {
         val db = FirebaseFirestore.getInstance()
 
         var mInitialStudents: MutableList<Student> = Student.readAllFromDatabase()
-        val mInitialAdapter = StudentAdapter(activity, mInitialStudents)
+        val mInitialAdapter =
+            StudentAdapter(
+                activity,
+                mInitialStudents
+            )
         val mSearchResultsLabel: TextView = view.findViewById(R.id.search_results_label)
         mStudentRecyclerView.adapter = mInitialAdapter
         mStudentRecyclerView.isVisible = false
@@ -59,7 +66,11 @@ class LookupFragment : Fragment() {
                 }
                 mInitialStudents = mStudents
                 allAccessList = mStudents
-                val mAdapter = StudentAdapter(activity, mStudents)
+                val mAdapter =
+                    StudentAdapter(
+                        activity,
+                        mStudents
+                    )
                 mStudentRecyclerView.adapter = mAdapter
 
             })
@@ -72,7 +83,11 @@ class LookupFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 var filteredResults = filterResults(mInitialStudents, s.toString())
-                val mFilteredAdapter = StudentAdapter(activity, filteredResults)
+                val mFilteredAdapter =
+                    StudentAdapter(
+                        activity,
+                        filteredResults
+                    )
                 mStudentRecyclerView.adapter = mFilteredAdapter
                 mStudentRecyclerView.isVisible = true
                 mSearchResultsLabel.isVisible = true
@@ -91,7 +106,8 @@ class LookupFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): LookupFragment = LookupFragment()
+        fun newInstance(): LookupFragment =
+            LookupFragment()
         private const val LOOKUP_FRAGMENT = "lookup fragment"
     }
 
@@ -103,7 +119,13 @@ class LookupFragment : Fragment() {
     class StudentAdapter(private val context: FragmentActivity?, private val students: List<Student>):
         RecyclerView.Adapter<StudentAdapter.StudentHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentHolder {
-            return StudentHolder(LayoutInflater.from(context).inflate(R.layout.list_item_student, parent, false))
+            return StudentHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_student,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -124,7 +146,12 @@ class LookupFragment : Fragment() {
                 mStudentEmailLabel.text = student.student_email
                 itemView.setOnClickListener {
                     val transaction = fm.beginTransaction()
-                    transaction.replace(R.id.main_container, ProfileFragment.newOtherProfileInstance(student))
+                    transaction.replace(
+                        R.id.main_container,
+                        ProfileFragment.newOtherProfileInstance(
+                            student
+                        )
+                    )
                     transaction.addToBackStack(null)
                     transaction.commit()
                 }

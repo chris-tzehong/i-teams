@@ -7,6 +7,12 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.finalyearproject.home.LecturerHomeFragment
+import com.example.finalyearproject.home.StudentHomeFragment
+import com.example.finalyearproject.lookup.LookupFragment
+import com.example.finalyearproject.lecturerreview.LecturerPeerReviewListFragment
+import com.example.finalyearproject.profile.ProfileFragment
+import com.example.finalyearproject.studentreview.StudentPeerReviewListFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {

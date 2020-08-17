@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.lecturerreview
 
 
 import android.os.Bundle
@@ -13,6 +13,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.PeerReview
+import com.example.finalyearproject.model.PeerReviewGrouping
+import com.example.finalyearproject.model.PeerReviewResult
+import com.example.finalyearproject.model.Student
 import com.google.firebase.firestore.FirebaseFirestore
 
 /**
@@ -26,9 +31,13 @@ class LecturerPeerReviewResultsFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_lecturer_peer_review_results, container, false)
-        val mLecturerPeerReviewResultsRecyclerView: RecyclerView = view.findViewById(R.id.lecturer_peer_review_results_recycler_view)
+        val mLecturerPeerReviewResultsRecyclerView: RecyclerView = view.findViewById(
+            R.id.lecturer_peer_review_results_recycler_view
+        )
         val mLecturerPeerReviewResultsNotDoneLabel: TextView = view.findViewById(R.id.lecturer_peer_review_not_done_label)
-        val mLecturerPeerReviewResultsNotDoneRecyclerView: RecyclerView = view.findViewById(R.id.lecturer_peer_review_results_not_done_students_recycler_view)
+        val mLecturerPeerReviewResultsNotDoneRecyclerView: RecyclerView = view.findViewById(
+            R.id.lecturer_peer_review_results_not_done_students_recycler_view
+        )
         mLecturerPeerReviewResultsNotDoneLabel.isVisible = false
         mLecturerPeerReviewResultsRecyclerView.layoutManager = LinearLayoutManager(activity)
         mLecturerPeerReviewResultsNotDoneRecyclerView.layoutManager = LinearLayoutManager(activity)
@@ -46,7 +55,11 @@ class LecturerPeerReviewResultsFragment : Fragment() {
         groupRef.get().addOnSuccessListener {documentSnapshot ->
             val peerReviewGrouping = documentSnapshot.toObject(PeerReviewGrouping::class.java)
             val temporaryResultsHolders = mutableListOf<TemporaryResultsHolder>()
-            val mViewStudentResultsAdapter = ViewStudentResultsAdapter(activity, temporaryResultsHolders)
+            val mViewStudentResultsAdapter =
+                ViewStudentResultsAdapter(
+                    activity,
+                    temporaryResultsHolders
+                )
             var preventOverwriteTrigger = 0
             peerReviewGrouping!!.student_email_list!!.forEach { email ->
                 groupRef.collection(email).whereEqualTo("review_target", reviewTarget).get().addOnSuccessListener { querySnapshot ->
@@ -70,7 +83,11 @@ class LecturerPeerReviewResultsFragment : Fragment() {
                             }
                         }
                         if (peerReviewNotDoneStudents.isNotEmpty()) {
-                            val mNotDoneStudentsAdapter = NotDoneStudentsAdapter(activity, peerReviewNotDoneStudents)
+                            val mNotDoneStudentsAdapter =
+                                NotDoneStudentsAdapter(
+                                    activity,
+                                    peerReviewNotDoneStudents
+                                )
                             mLecturerPeerReviewResultsNotDoneRecyclerView.adapter = mNotDoneStudentsAdapter
                             mLecturerPeerReviewResultsNotDoneLabel.isVisible = true
                             mLecturerPeerReviewResultsNotDoneRecyclerView.isVisible = true
@@ -78,8 +95,18 @@ class LecturerPeerReviewResultsFragment : Fragment() {
                         peerReviewResults.forEach { item ->
                             db.collection(Student.STUDENT_COLLECTION).document(item.reviewer_email.toString()).get().addOnSuccessListener { documentSnapshot ->
                                 val student = documentSnapshot.toObject(Student::class.java)
-                                val temporaryResultsHolder = TemporaryResultsHolder(peerReviewGrouping.subject_name, peerReviewGrouping.assignment_id, peerReviewGrouping.group_id,
-                                    student!!.student_name, item.reviewer_email, item.available_marks, item.review_marks, peerReviewGrouping.question_set_name, reviewTarget)
+                                val temporaryResultsHolder =
+                                    TemporaryResultsHolder(
+                                        peerReviewGrouping.subject_name,
+                                        peerReviewGrouping.assignment_id,
+                                        peerReviewGrouping.group_id,
+                                        student!!.student_name,
+                                        item.reviewer_email,
+                                        item.available_marks,
+                                        item.review_marks,
+                                        peerReviewGrouping.question_set_name,
+                                        reviewTarget
+                                    )
                                 temporaryResultsHolders.add(temporaryResultsHolder)
                                 mViewStudentResultsAdapter.notifyDataSetChanged()
                             }
@@ -102,10 +129,12 @@ class LecturerPeerReviewResultsFragment : Fragment() {
         const val GROUP_ID = "lecturer peer review results group id"
         const val REVIEW_TARGET = "lecturer peer review results review target"
 
-        fun newInstance(): LecturerPeerReviewResultsFragment = LecturerPeerReviewResultsFragment()
+        fun newInstance(): LecturerPeerReviewResultsFragment =
+            LecturerPeerReviewResultsFragment()
 
         fun getResultsInstance(subject_name: String?, assignment_id: String?, group_id: String?, review_target: String?): LecturerPeerReviewResultsFragment {
-            val fragment = LecturerPeerReviewResultsFragment()
+            val fragment =
+                LecturerPeerReviewResultsFragment()
             val args = Bundle()
             args.putString(SUBJECT_NAME, subject_name)
             args.putString(ASSIGNMENT_ID, assignment_id)
@@ -121,7 +150,13 @@ class LecturerPeerReviewResultsFragment : Fragment() {
             parent: ViewGroup,
             viewType: Int
         ): ViewStudentResultsHolder {
-            return ViewStudentResultsHolder(LayoutInflater.from(context).inflate(R.layout.list_item_peer_review_results, parent, false))
+            return ViewStudentResultsHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_peer_review_results,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -136,22 +171,32 @@ class LecturerPeerReviewResultsFragment : Fragment() {
         class ViewStudentResultsHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             fun bind(temporaryResultsHolder: TemporaryResultsHolder, fragmentManager: FragmentManager) = with(itemView) {
-                val mLecturerPeerReviewResultsStudentNameLabel: TextView = itemView.findViewById(R.id.lecturer_peer_review_results_student_name_label)
-                val mLecturerPeerReviewResultsStudentEmailLabel: TextView = itemView.findViewById(R.id.lecturer_peer_review_results_student_email_label)
-                val mLecturerPeerReviewResultsStudentResultsLabel: TextView = itemView.findViewById(R.id.lecturer_peer_review_results_student_results_label)
-                val mLecturerPeerReviewResultsViewDetailsButton: Button = itemView.findViewById(R.id.lecturer_peer_review_results_view_details_button)
+                val mLecturerPeerReviewResultsStudentNameLabel: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_results_student_name_label
+                )
+                val mLecturerPeerReviewResultsStudentEmailLabel: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_results_student_email_label
+                )
+                val mLecturerPeerReviewResultsStudentResultsLabel: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_results_student_results_label
+                )
+                val mLecturerPeerReviewResultsViewDetailsButton: Button = itemView.findViewById(
+                    R.id.lecturer_peer_review_results_view_details_button
+                )
 
                 val nameString = resources.getString(R.string.lecturer_peer_review_results_student_name_placeholder, temporaryResultsHolder.reviewer_name)
                 mLecturerPeerReviewResultsStudentNameLabel.text = nameString
                 mLecturerPeerReviewResultsStudentEmailLabel.text = temporaryResultsHolder.reviewer_email
                 val resultsInPercentage = temporaryResultsHolder.received_results!! * 100 / temporaryResultsHolder.available_results!!.toDouble()
-                val resultsString = resources.getString(R.string.lecturer_peer_review_results_student_results_placeholder, temporaryResultsHolder.received_results,
+                val resultsString = resources.getString(
+                    R.string.lecturer_peer_review_results_student_results_placeholder, temporaryResultsHolder.received_results,
                     temporaryResultsHolder.available_results, resultsInPercentage)
                 mLecturerPeerReviewResultsStudentResultsLabel.text = resultsString
 
                 mLecturerPeerReviewResultsViewDetailsButton.setOnClickListener {
                     val transaction = fragmentManager.beginTransaction()
-                    transaction.replace(R.id.main_container, LecturerPeerReviewResultsDetailsFragment.getResultDetailsInstance(temporaryResultsHolder.subject_name.toString(),
+                    transaction.replace(
+                        R.id.main_container, LecturerPeerReviewResultsDetailsFragment.getResultDetailsInstance(temporaryResultsHolder.subject_name.toString(),
                         temporaryResultsHolder.assignment_id.toString(), temporaryResultsHolder.group_id.toString(), temporaryResultsHolder.reviewer_email.toString(),
                         temporaryResultsHolder.review_target.toString(), temporaryResultsHolder.question_set.toString()))
                     transaction.addToBackStack(null)
@@ -163,7 +208,13 @@ class LecturerPeerReviewResultsFragment : Fragment() {
 
     class NotDoneStudentsAdapter(private val context: FragmentActivity?, private val emails: List<String>): RecyclerView.Adapter<NotDoneStudentsAdapter.NotDoneStudentsHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotDoneStudentsHolder {
-            return NotDoneStudentsHolder(LayoutInflater.from(context).inflate(R.layout.list_item_not_done_students, parent, false))
+            return NotDoneStudentsHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_not_done_students,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -178,7 +229,9 @@ class LecturerPeerReviewResultsFragment : Fragment() {
         class NotDoneStudentsHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             fun bind(email: String) = with(itemView) {
-                val mLecturerPeerReviewResultsNotDoneStudentLabel: TextView = itemView.findViewById(R.id.lecturer_peer_review_results_not_done_student_name_placeholder)
+                val mLecturerPeerReviewResultsNotDoneStudentLabel: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_results_not_done_student_name_placeholder
+                )
                 mLecturerPeerReviewResultsNotDoneStudentLabel.text = email
             }
         }

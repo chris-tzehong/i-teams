@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.home
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import com.example.finalyearproject.LoginActivity
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.Announcement
+import com.example.finalyearproject.model.Lecturer
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
@@ -46,7 +50,10 @@ class AddAnnouncementFragment : Fragment() {
             )
             Announcement.writeToDatabase(announcement)
             val transaction = fragmentManager!!.beginTransaction()
-            transaction.replace(R.id.main_container, LecturerHomeFragment.newInstance())
+            transaction.replace(
+                R.id.main_container,
+                LecturerHomeFragment.newInstance()
+            )
             transaction.addToBackStack(null)
             transaction.commit()
         }
@@ -55,7 +62,8 @@ class AddAnnouncementFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): AddAnnouncementFragment = AddAnnouncementFragment()
+        fun newInstance(): AddAnnouncementFragment =
+            AddAnnouncementFragment()
 
     }
 }

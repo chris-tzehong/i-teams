@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.lecturerreview
 
 
 import android.content.Context
@@ -17,6 +17,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.MainActivity
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.PeerReview
+import com.example.finalyearproject.model.PeerReviewGrouping
+import com.example.finalyearproject.model.PeerReviewQuestionSet
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_add_new_peer_review_question_set.*
 
@@ -28,14 +33,28 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_add_new_peer_review_question_set, container, false)
-        val mAddNewPeerReviewQuestionSetRadioGroup: RadioGroup = view.findViewById(R.id.add_new_peer_review_question_set_radio_group)
-        val mAddNewPeerReviewQuestionDefaultSetRadioButton: RadioButton = view.findViewById(R.id.add_new_peer_review_default_question_set_radio_button)
-        val mAddNewPeerReviewQuestionCustomSetRadioButton: RadioButton = view.findViewById(R.id.add_new_peer_review_custom_question_set_radio_button)
+        val mAddNewPeerReviewQuestionSetRadioGroup: RadioGroup = view.findViewById(
+            R.id.add_new_peer_review_question_set_radio_group
+        )
+        val mAddNewPeerReviewQuestionDefaultSetRadioButton: RadioButton = view.findViewById(
+            R.id.add_new_peer_review_default_question_set_radio_button
+        )
+        val mAddNewPeerReviewQuestionCustomSetRadioButton: RadioButton = view.findViewById(
+            R.id.add_new_peer_review_custom_question_set_radio_button
+        )
         val mAddNewPeerReviewQuestionSetName: EditText = view.findViewById(R.id.add_new_peer_review_custom_question_set_name)
-        val mAddNewPeerReviewQuestionSetAddCustomQuestionButton: Button = view.findViewById(R.id.add_new_peer_review_add_custom_question_button)
-        val mAddNewPeerReviewQuestionCreateSessionButton: Button = view.findViewById(R.id.add_new_peer_review_create_session_button)
-        val mAddNewPeerReviewQuestionDefaultSetRecyclerView: RecyclerView = view.findViewById(R.id.add_new_peer_review_default_question_set_recycler_view)
-        val mAddNewPeerReviewQuestionCustomSetRecyclerView: RecyclerView = view.findViewById(R.id.add_new_peer_review_custom_question_set_recycler_view)
+        val mAddNewPeerReviewQuestionSetAddCustomQuestionButton: Button = view.findViewById(
+            R.id.add_new_peer_review_add_custom_question_button
+        )
+        val mAddNewPeerReviewQuestionCreateSessionButton: Button = view.findViewById(
+            R.id.add_new_peer_review_create_session_button
+        )
+        val mAddNewPeerReviewQuestionDefaultSetRecyclerView: RecyclerView = view.findViewById(
+            R.id.add_new_peer_review_default_question_set_recycler_view
+        )
+        val mAddNewPeerReviewQuestionCustomSetRecyclerView: RecyclerView = view.findViewById(
+            R.id.add_new_peer_review_custom_question_set_recycler_view
+        )
         val mAddNewPeerReviewQuestionSetNameLabel: TextView = view.findViewById(R.id.add_new_peer_review_custom_question_set_name_label)
         val mAddNewPeerReviewRootLayout: FrameLayout = view.findViewById(R.id.add_new_custom_question_root_layout)
         val questions = mutableListOf<String>()
@@ -48,7 +67,11 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
 
         mAddNewPeerReviewQuestionDefaultSetRecyclerView.layoutManager = LinearLayoutManager(activity)
         mAddNewPeerReviewQuestionCustomSetRecyclerView.layoutManager = LinearLayoutManager(activity)
-        val mCustomQuestionAdapter = QuestionAdapter(activity, questions)
+        val mCustomQuestionAdapter =
+            QuestionAdapter(
+                activity,
+                questions
+            )
         mAddNewPeerReviewQuestionCustomSetRecyclerView.adapter = mCustomQuestionAdapter
 
         mAddNewPeerReviewRootLayout.foreground.alpha = 0
@@ -80,7 +103,11 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
 
         db.collection(PeerReviewQuestionSet.PEER_REVIEW_QUESTION_SET_COLLECTION).document("default").get().addOnSuccessListener { documentSnapshot ->
             val questionSet = documentSnapshot.toObject(PeerReviewQuestionSet::class.java)
-            val mQuestionAdapter = QuestionAdapter(activity, questionSet!!.question_list as List<String>)
+            val mQuestionAdapter =
+                QuestionAdapter(
+                    activity,
+                    questionSet!!.question_list as List<String>
+                )
             mAddNewPeerReviewQuestionDefaultSetRecyclerView.adapter = mQuestionAdapter
         }
 
@@ -116,7 +143,8 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
 
             mConfirmAddNewCustomQuestionButton.setOnClickListener {
                 if (mAddNewCustomQuestion.text.isEmpty()) {
-                    Toast.makeText(activity, R.string.add_new_peer_review_empty_new_question_error, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity,
+                        R.string.add_new_peer_review_empty_new_question_error, Toast.LENGTH_SHORT).show()
                 } else {
                     questions.add(mAddNewCustomQuestion.text.toString())
                     mCustomQuestionAdapter.notifyDataSetChanged()
@@ -135,7 +163,11 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
                 questionSetName = "default"
             } else {
                 questionSetName = mAddNewPeerReviewQuestionSetName.text.toString()
-                val questionSet = PeerReviewQuestionSet(questionSetName, questions)
+                val questionSet =
+                    PeerReviewQuestionSet(
+                        questionSetName,
+                        questions
+                    )
                 db.collection(PeerReviewQuestionSet.PEER_REVIEW_QUESTION_SET_COLLECTION).document(questionSetName.toString()).set(questionSet).addOnSuccessListener {
                     Log.d(MainActivity.TAG, "Successfully written into database!")
                 }
@@ -158,7 +190,10 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
                 }
             }
             val transaction = fragmentManager!!.beginTransaction()
-            transaction.replace(R.id.main_container, LecturerPeerReviewListFragment.newInstance())
+            transaction.replace(
+                R.id.main_container,
+                LecturerPeerReviewListFragment.newInstance()
+            )
             transaction.addToBackStack(null)
             transaction.commit()
         }
@@ -170,10 +205,12 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
         const val SUBJECT_NAME = "add new peer review question set subject name"
         const val ASSIGNMENT_ID = "add new peer review question set assignment id"
 
-        fun newInstance(): AddNewPeerReviewDetailsFragment = AddNewPeerReviewDetailsFragment()
+        fun newInstance(): AddNewPeerReviewDetailsFragment =
+            AddNewPeerReviewDetailsFragment()
 
         fun getNewAddPeerReviewQuestionSetInstance(subjectName: String, assignmentId: String): AddNewPeerReviewQuestionSetFragment {
-            val fragment = AddNewPeerReviewQuestionSetFragment()
+            val fragment =
+                AddNewPeerReviewQuestionSetFragment()
             val args = Bundle()
             args.putString(SUBJECT_NAME, subjectName)
             args.putString(ASSIGNMENT_ID, assignmentId)
@@ -185,7 +222,13 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
 
     class QuestionAdapter(private val context: FragmentActivity?, private val questions: List<String>): RecyclerView.Adapter<QuestionAdapter.QuestionHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionHolder {
-            return QuestionHolder(LayoutInflater.from(context).inflate(R.layout.list_item_add_new_peer_review_question, parent, false))
+            return QuestionHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_add_new_peer_review_question,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -200,7 +243,9 @@ class AddNewPeerReviewQuestionSetFragment : Fragment() {
         class QuestionHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             fun bind(question: String) = with(itemView) {
-                val mAddNewPeerReviewQuestionLabel: TextView = itemView.findViewById(R.id.add_new_peer_review_questions_label)
+                val mAddNewPeerReviewQuestionLabel: TextView = itemView.findViewById(
+                    R.id.add_new_peer_review_questions_label
+                )
                 mAddNewPeerReviewQuestionLabel.text = question
             }
         }

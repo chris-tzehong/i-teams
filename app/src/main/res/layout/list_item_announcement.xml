@@ -14,8 +14,12 @@
         android:text="@string/announcement_title_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:justificationMode="inter_word"
         android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        tools:targetApi="o"
+        android:paddingStart="0dp"
+        android:paddingEnd="20dp"/>
 
     <TextView
         android:id="@+id/announcement_date"
@@ -43,7 +47,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/announcement_date"
         tools:targetApi="o"
-        android:paddingRight="20dp"/>
+        android:paddingStart="0dp"
+        android:paddingEnd="20dp"/>
 
     <TextView
         android:id="@+id/announcer_name"

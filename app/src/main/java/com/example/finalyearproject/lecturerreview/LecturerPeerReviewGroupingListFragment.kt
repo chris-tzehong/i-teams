@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.lecturerreview
 
 
 import android.app.AlertDialog
@@ -20,8 +20,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.MainActivity
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.PeerReview
+import com.example.finalyearproject.model.PeerReviewGrouping
+import com.example.finalyearproject.model.PeerReviewResult
+import com.example.finalyearproject.model.Student
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import java.io.File
 import java.io.FileOutputStream
 import java.lang.Exception
@@ -38,11 +43,17 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_lecturer_peer_review_grouping_list, container, false)
-        val mLecturerPeerReviewGroupingsRecyclerView: RecyclerView = view.findViewById(R.id.lecturer_peer_review_groupings_recycler_view)
+        val mLecturerPeerReviewGroupingsRecyclerView: RecyclerView = view.findViewById(
+            R.id.lecturer_peer_review_groupings_recycler_view
+        )
         mLecturerPeerReviewGroupingsRecyclerView.layoutManager = LinearLayoutManager(activity)
         val lecturerPeerReviewGroupings = mutableListOf<PeerReviewGrouping>()
-        val mLecturerPeerReviewGroupingsDownloadResultsButton: Button = view.findViewById(R.id.lecturer_peer_review_groupings_download_results_button)
-        val mLecturerPeerReviewGroupingsReleaseResultsButton: Button = view.findViewById(R.id.lecturer_peer_review_groupings_release_result_button)
+        val mLecturerPeerReviewGroupingsDownloadResultsButton: Button = view.findViewById(
+            R.id.lecturer_peer_review_groupings_download_results_button
+        )
+        val mLecturerPeerReviewGroupingsReleaseResultsButton: Button = view.findViewById(
+            R.id.lecturer_peer_review_groupings_release_result_button
+        )
         var isDone = true
         var isReleased = false
         val db = FirebaseFirestore.getInstance()
@@ -58,7 +69,11 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
                     mLecturerPeerReviewGroupingsReleaseResultsButton.isEnabled = !isReleased
                 }
 
-                val mLecturerPeerReviewGroupingAdapter = LecturerPeerReviewGroupingAdapter(activity, lecturerPeerReviewGroupings)
+                val mLecturerPeerReviewGroupingAdapter =
+                    LecturerPeerReviewGroupingAdapter(
+                        activity,
+                        lecturerPeerReviewGroupings
+                    )
                 mLecturerPeerReviewGroupingsRecyclerView.adapter = mLecturerPeerReviewGroupingAdapter
             }
         }
@@ -158,7 +173,8 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
                         db.collection(PeerReview.PEER_REVIEW_COLLECTION).document(subjectName.toString()).collection(assignmentId.toString()).document(item.group_id.toString()).update("released", true).addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 isReleased = true
-                                Toast.makeText(activity, R.string.lecturer_peer_review_groupings_successful_release_results_description, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(activity,
+                                    R.string.lecturer_peer_review_groupings_successful_release_results_description, Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -188,7 +204,8 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
                                             val totalAffectionTwoPoints = BigDecimal(totalAffectionScore).setScale(2, RoundingMode.UP)
                                             totalAffectionScore = totalAffectionTwoPoints.toDouble()
                                             db.collection(Student.STUDENT_COLLECTION).document(key.toString()).get().addOnSuccessListener { documentSnapshot ->
-                                                val student = documentSnapshot.toObject(Student::class.java)
+                                                val student = documentSnapshot.toObject(
+                                                    Student::class.java)
                                                 val changedReputationScore = student!!.student_reputation!! - totalAffectionScore
                                                 db.collection(Student.STUDENT_COLLECTION).document(key.toString()).update("student_reputation", changedReputationScore).addOnSuccessListener {
                                                     Log.d(MainActivity.TAG, "Score successfully updated!")
@@ -225,10 +242,12 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
         const val SUBJECT_NAME = "lecturer peer review grouping list subject name"
         const val ASSIGNMENT_ID = "lecturer peer review grouping list assignment id"
 
-        fun newInstance(): LecturerPeerReviewGroupingListFragment = LecturerPeerReviewGroupingListFragment()
+        fun newInstance(): LecturerPeerReviewGroupingListFragment =
+            LecturerPeerReviewGroupingListFragment()
 
         fun getPeerReviewGroupingsNewInstance(subject_name: String, assignment_id: String): LecturerPeerReviewGroupingListFragment {
-            val fragment = LecturerPeerReviewGroupingListFragment()
+            val fragment =
+                LecturerPeerReviewGroupingListFragment()
             val args = Bundle()
             args.putString(SUBJECT_NAME, subject_name)
             args.putString(ASSIGNMENT_ID, assignment_id)
@@ -239,7 +258,13 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
 
     class LecturerPeerReviewGroupingAdapter(private val context: FragmentActivity?, private val lecturerPeerReviewGroupings: List<PeerReviewGrouping>): RecyclerView.Adapter<LecturerPeerReviewGroupingAdapter.LecturerPeerReviewGroupingHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LecturerPeerReviewGroupingHolder {
-            return LecturerPeerReviewGroupingHolder(LayoutInflater.from(context).inflate(R.layout.list_item_lecturer_peer_review_grouping, parent, false))
+            return LecturerPeerReviewGroupingHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_lecturer_peer_review_grouping,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -254,9 +279,15 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
         class LecturerPeerReviewGroupingHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             fun bind(lecturerPeerReviewGrouping: PeerReviewGrouping, fragmentManager: FragmentManager) = with(itemView) {
-                val mLecturerPeerReviewGroupingGroupId: TextView = itemView.findViewById(R.id.lecturer_peer_review_grouping_group_id)
-                val mLecturerPeerReviewGroupingNumberOfStudents: TextView = itemView.findViewById(R.id.lecturer_peer_review_grouping_number_of_students)
-                val mLecturerPeerReviewGroupingIsDoneImage: ImageView = itemView.findViewById(R.id.lecturer_peer_review_grouping_is_done_image)
+                val mLecturerPeerReviewGroupingGroupId: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_grouping_group_id
+                )
+                val mLecturerPeerReviewGroupingNumberOfStudents: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_grouping_number_of_students
+                )
+                val mLecturerPeerReviewGroupingIsDoneImage: ImageView = itemView.findViewById(
+                    R.id.lecturer_peer_review_grouping_is_done_image
+                )
 
                 mLecturerPeerReviewGroupingGroupId.text = lecturerPeerReviewGrouping.group_id
                 val stringToPlace = resources.getString(R.string.lecturer_peer_review_groupings_number_of_students_placeholder, lecturerPeerReviewGrouping.student_email_list!!.size)
@@ -265,8 +296,14 @@ class LecturerPeerReviewGroupingListFragment : Fragment() {
 
                 itemView.setOnClickListener {
                     val transaction = fragmentManager.beginTransaction()
-                    transaction.replace(R.id.main_container, LecturerPeerReviewIndividualStudentList.getNewIndividualListInstance(lecturerPeerReviewGrouping.subject_name,
-                        lecturerPeerReviewGrouping.assignment_id, lecturerPeerReviewGrouping.group_id))
+                    transaction.replace(
+                        R.id.main_container,
+                        LecturerPeerReviewIndividualStudentList.getNewIndividualListInstance(
+                            lecturerPeerReviewGrouping.subject_name,
+                            lecturerPeerReviewGrouping.assignment_id,
+                            lecturerPeerReviewGrouping.group_id
+                        )
+                    )
                     transaction.addToBackStack(null)
                     transaction.commit()
                 }

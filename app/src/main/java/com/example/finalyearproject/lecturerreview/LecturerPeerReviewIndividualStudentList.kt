@@ -1,4 +1,4 @@
-package com.example.finalyearproject
+package com.example.finalyearproject.lecturerreview
 
 
 import android.os.Bundle
@@ -11,6 +11,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.finalyearproject.R
+import com.example.finalyearproject.model.PeerReview
+import com.example.finalyearproject.model.PeerReviewGrouping
+import com.example.finalyearproject.model.Student
 import com.google.firebase.firestore.FirebaseFirestore
 
 class LecturerPeerReviewIndividualStudentList : Fragment() {
@@ -21,7 +25,9 @@ class LecturerPeerReviewIndividualStudentList : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_lecturer_peer_review_individual_student_list, container, false)
-        val mLecturerPeerReviewIndividualStudentListRecyclerView: RecyclerView = view.findViewById(R.id.lecturer_peer_review_individual_list_recycler_view)
+        val mLecturerPeerReviewIndividualStudentListRecyclerView: RecyclerView = view.findViewById(
+            R.id.lecturer_peer_review_individual_list_recycler_view
+        )
         mLecturerPeerReviewIndividualStudentListRecyclerView.layoutManager = LinearLayoutManager(activity)
         val db = FirebaseFirestore.getInstance()
         val subjectName = arguments!!.getString(SUBJECT_NAME)
@@ -29,14 +35,25 @@ class LecturerPeerReviewIndividualStudentList : Fragment() {
         val groupId = arguments!!.getString(GROUP_ID)
 
         db.collection(PeerReview.PEER_REVIEW_COLLECTION).document(subjectName!!).collection(assignmentId!!).document(groupId!!).get().addOnSuccessListener { documentSnapshot ->
-            val lecturerPeerReviewIndividualListGrouping = documentSnapshot.toObject(PeerReviewGrouping::class.java)
+            val lecturerPeerReviewIndividualListGrouping = documentSnapshot.toObject(
+                PeerReviewGrouping::class.java)
             val temporaryIndividualHolders = mutableListOf<TemporaryIndividualHolder>()
-            val mLecturerPeerReviewIndividualListAdapter = LecturerIndividualAdapter(activity, temporaryIndividualHolders)
+            val mLecturerPeerReviewIndividualListAdapter =
+                LecturerIndividualAdapter(
+                    activity,
+                    temporaryIndividualHolders
+                )
             lecturerPeerReviewIndividualListGrouping!!.student_email_list!!.forEach { email ->
                 db.collection(Student.STUDENT_COLLECTION).document(email).get().addOnSuccessListener { documentSnapshot ->
                     val student = documentSnapshot.toObject(Student::class.java)
-                    val temporaryIndividualHolder = TemporaryIndividualHolder(lecturerPeerReviewIndividualListGrouping.subject_name, lecturerPeerReviewIndividualListGrouping.assignment_id,
-                        lecturerPeerReviewIndividualListGrouping.group_id, email, student!!.student_name)
+                    val temporaryIndividualHolder =
+                        TemporaryIndividualHolder(
+                            lecturerPeerReviewIndividualListGrouping.subject_name,
+                            lecturerPeerReviewIndividualListGrouping.assignment_id,
+                            lecturerPeerReviewIndividualListGrouping.group_id,
+                            email,
+                            student!!.student_name
+                        )
                     temporaryIndividualHolders.add(temporaryIndividualHolder)
                     mLecturerPeerReviewIndividualListAdapter.notifyDataSetChanged()
                 }
@@ -52,10 +69,12 @@ class LecturerPeerReviewIndividualStudentList : Fragment() {
         const val ASSIGNMENT_ID = "lecturer peer review individual student list assignment id"
         const val GROUP_ID = "lecturer peer review individual student list group id"
 
-        fun newInstance(): LecturerPeerReviewIndividualStudentList = LecturerPeerReviewIndividualStudentList()
+        fun newInstance(): LecturerPeerReviewIndividualStudentList =
+            LecturerPeerReviewIndividualStudentList()
 
         fun getNewIndividualListInstance(subject_name: String?, assignment_id: String?, group_id: String?): LecturerPeerReviewIndividualStudentList {
-            val fragment = LecturerPeerReviewIndividualStudentList()
+            val fragment =
+                LecturerPeerReviewIndividualStudentList()
             val args = Bundle()
             args.putString(SUBJECT_NAME, subject_name)
             args.putString(ASSIGNMENT_ID, assignment_id)
@@ -70,7 +89,13 @@ class LecturerPeerReviewIndividualStudentList : Fragment() {
             parent: ViewGroup,
             viewType: Int
         ): LecturerIndividualHolder {
-            return LecturerIndividualHolder(LayoutInflater.from(context).inflate(R.layout.list_item_lecturer_individual_peer_review, parent, false))
+            return LecturerIndividualHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.list_item_lecturer_individual_peer_review,
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun getItemCount(): Int {
@@ -85,16 +110,27 @@ class LecturerPeerReviewIndividualStudentList : Fragment() {
         class LecturerIndividualHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
             fun bind(temporaryIndividualHolder: TemporaryIndividualHolder, fragmentManager: FragmentManager) = with(itemView) {
-                val mLecturerPeerReviewIndividualListEmail: TextView = itemView.findViewById(R.id.lecturer_peer_review_individual_list_email_label)
-                val mLecturerPeerReviewIndividualListName: TextView = itemView.findViewById(R.id.lecturer_peer_review_individual_list_student_name_label)
+                val mLecturerPeerReviewIndividualListEmail: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_individual_list_email_label
+                )
+                val mLecturerPeerReviewIndividualListName: TextView = itemView.findViewById(
+                    R.id.lecturer_peer_review_individual_list_student_name_label
+                )
 
                 mLecturerPeerReviewIndividualListEmail.text = temporaryIndividualHolder.reviewer_email
                 mLecturerPeerReviewIndividualListName.text = temporaryIndividualHolder.reviewer_name
 
                 itemView.setOnClickListener {
                     val transaction = fragmentManager.beginTransaction()
-                    transaction.replace(R.id.main_container, LecturerPeerReviewResultsFragment.getResultsInstance(temporaryIndividualHolder.subject_name.toString(),
-                        temporaryIndividualHolder.assignment_id.toString(), temporaryIndividualHolder.group_id.toString(), temporaryIndividualHolder.reviewer_email.toString()))
+                    transaction.replace(
+                        R.id.main_container,
+                        LecturerPeerReviewResultsFragment.getResultsInstance(
+                            temporaryIndividualHolder.subject_name.toString(),
+                            temporaryIndividualHolder.assignment_id.toString(),
+                            temporaryIndividualHolder.group_id.toString(),
+                            temporaryIndividualHolder.reviewer_email.toString()
+                        )
+                    )
                     transaction.addToBackStack(null)
                     transaction.commit()
                 }
